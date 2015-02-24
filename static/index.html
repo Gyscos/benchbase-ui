@@ -1,0 +1,38 @@
+<html>
+	<head>
+		<title>BenchBase WebUI</title>
+
+		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" />
+		<link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap.material-design/0.2.2/css/material-wfont.min.css" />
+		<link rel="stylesheet" href="//cdn.jsdelivr.net/bootstrap.material-design/0.2.2/css/ripples.css" />
+	</head>
+
+	<body>
+
+		<div class="navbar navbar-default">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="javascript:void(0)">BenchBase WebUI</a>
+			</div>
+			<div class="navbar-collapse collapse navbar-responsive-collapse">
+				<ul class="nav navbar-nav">
+					<li id="listBtn" class="active"><a href="/#list" onClick="javascript:openList()">List</a></li>
+					<li id="compareBtn"><a href="/#compare" onClick="javascript:openCompare()">Compare</a></li>
+				</ul>
+			</div>
+		</div>
+
+
+		<!-- Scripts beginning now -->
+		<script src="//code.jquery.com/jquery-2.1.3.min.js"></script>
+		<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+		<script src="//cdn.jsdelivr.net/bootstrap.material-design/0.2.2/js/material.min.js"></script>
+		<script src="//cdn.jsdelivr.net/bootstrap.material-design/0.2.2/js/ripples.min.js"></script>
+		<script src="/static/index.js"></script>
+		<script>$.material.init();</script>
+	</body>
+</html>
