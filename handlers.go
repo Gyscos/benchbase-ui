@@ -1,14 +1,44 @@
 package main
 
-import "net/http"
+import (
+	"html/template"
+	"log"
+	"net/http"
+	"strconv"
+)
 
-func setupHandlers() {
+func setupHandlers(host string) {
+	listT, err := template.ParseFiles("templates/list.html", "templates/navbar.html", "templates/scripts.html", "templates/stylesheets.html")
+	if err != nil {
+		log.Fatal(err)
+	}
+	indexT, err := template.ParseFiles("templates/index.html", "templates/navbar.html", "templates/scripts.html", "templates/stylesheets.html")
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "static/index.html")
+		err := indexT.Execute(w, nil)
+		if err != nil {
+			log.Println(err)
+		}
 	})
 
 	http.HandleFunc("/list", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "static/list.html")
+		filter := r.FormValue("filter")
+		depth, _ := strconv.ParseInt(r.FormValue("depth"), 10, 64)
+		err := listT.Execute(w, struct {
+			Host   string
+			Filter string
+			Depth  int64
+		}{
+			host,
+			filter,
+			depth,
+		})
+		if err != nil {
+			log.Println(err)
+		}
 	})
 
 	http.HandleFunc("/compare", func(w http.ResponseWriter, r *http.Request) {

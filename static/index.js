@@ -8,6 +8,9 @@ function openCompare() {
 	$("#compareBtn").addClass("active");
 }
 
+$("#listBtn").click(openList)
+$("#compareBtn").click(openCompare)
+
 var hash = window.location.hash.substring(1);
 if (hash == "compare")
 	openCompare()

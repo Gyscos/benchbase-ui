@@ -16,7 +16,7 @@ func main() {
 
 	flag.Parse()
 
-	setupHandlers()
+	setupHandlers(host)
 
 	log.Println("Now listening to port", port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%v", port), nil))
