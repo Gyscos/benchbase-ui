@@ -1,20 +1,18 @@
 <html>
 	<head>
 		<title>List - BenchBase WebUI</title>
-
 		{{template "stylesheets" .}}
-
-		<style>
-.table-nonfluid {
-   width: auto !important;
-   margin:auto;
-}
-		</style>
 	</head>
 
 	<body>
 
 		{{template "navbar" .}}
+
+		{{if .Focus}}
+		<ol id="focus_list" class="breadcrumb" style="width: 800px; margin:auto; margin-bottom: 30px;">
+			<li>Focus</li>
+		</ol>
+		{{end}}
 
 		<div id="list"></div>
 
@@ -22,6 +20,22 @@
 
 
 		<script src="/static/list.js"></script>
+		{{if .Focus}}
+		<script>
+var focus = "{{.Focus}}";
+var focusList = focus.split(".");
+var prefix = "";
+$.each(focusList, function(i, token) {
+	var depth = {{.Depth}};
+	if (prefix == "")
+		depth = 2;
+	$("#focus_list").append("<li><a href='/list?filter={{.Filter}}&depth=" + depth + "&focus=" + prefix + "'>" + token + "</a></li>");
+	if (i != 0)
+		prefix += ".";
+	prefix += token;
+});
+		</script>
+		{{end}}
 		<script>getBenchList("{{.Host}}", "{{.Filter}}", {{.Depth}}, "{{.Focus}}");</script>
 	</body>
 </html>

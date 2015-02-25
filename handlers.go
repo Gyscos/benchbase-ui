@@ -27,8 +27,11 @@ func setupHandlers(host string) {
 	http.HandleFunc("/list", func(w http.ResponseWriter, r *http.Request) {
 		filter := r.FormValue("filter")
 		focus := r.FormValue("focus")
-		depth, _ := strconv.ParseInt(r.FormValue("depth"), 10, 64)
-		err := listT.Execute(w, struct {
+		depth, err := strconv.ParseInt(r.FormValue("depth"), 10, 64)
+		if err != nil {
+			depth = 2
+		}
+		err = listT.Execute(w, struct {
 			Host   string
 			Filter string
 			Depth  int64

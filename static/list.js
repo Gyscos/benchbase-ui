@@ -1,5 +1,4 @@
 function getBenchList(host, filter, depth, focus) {
-	var filter = ""
 	$.getJSON(host + "/list?filter=" + filter, function(data) {
 		if (data["Error"] != null) {
 			// Error?
@@ -27,7 +26,7 @@ function getBenchList(host, filter, depth, focus) {
 		// Now for each group, show a table
 		$.each(groups, function(i, group) {
 			// group is a list of benchmarks
-			var t = makeTable(group);
+			var t = makeTable(group, filter);
 			$("#list").append(t);
 		});
 	});
@@ -89,7 +88,7 @@ function makeTitle(configuration) {
 		return "Direct API";
 }
 
-function makeTable(benchlist) {
+function makeTable(benchlist, filter) {
 	var t = $("<table>");
 	t.addClass("table");
 	t.addClass("table-hover");
@@ -106,7 +105,7 @@ function makeTable(benchlist) {
 
 	var m = makeResultTree(benchlist[0]["Result"]);
 	mergeSingleChilds(m);
-	addTimeLabels(head, m, benchlist[0]["Conf"]);
+	addTimeLabels(head, m, benchlist[0]["Conf"], filter);
 
 	var body = $("<tbody>");
 	t.append(body);
@@ -124,7 +123,7 @@ function makeTable(benchlist) {
 	return t;
 }
 
-function addTimeLabels(head, resultTree, configuration) {
+function addTimeLabels(head, resultTree, configuration, filter) {
 	getWidthDepth(resultTree);
 
 	var title = makeTitle(configuration);
@@ -163,7 +162,7 @@ function addTimeLabels(head, resultTree, configuration) {
 			data["th"] = th;
 			var focus = ("prefix" in data) ? data.prefix : "";
 			focus += data.name;
-			th.html('<a href="/list?focus=' + focus + '&depth=1&filter=' + '">' + data.name + "<a>");
+			th.html('<a href="/list?focus=' + focus + '&depth=1&filter=' + filter + '">' + data.name + "<a>");
 			th.attr('colspan', data.dw.width);
 			if (data.dw.depth == 1)
 				th.attr('rowspan', maxDepth - depth);
