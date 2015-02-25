@@ -1,4 +1,4 @@
-function getBenchList(host, filter, depth) {
+function getBenchList(host, filter, depth, focus) {
 	var filter = ""
 	$.getJSON(host + "/list?filter=" + filter, function(data) {
 		if (data["Error"] != null) {
@@ -9,6 +9,14 @@ function getBenchList(host, filter, depth) {
 
 		// r is now a list of benchmarks
 		var benchlist = data["Result"];
+
+		if (focus != "") {
+			cutOutOfFocus(benchlist, focus);
+			if (depth != 0) {
+				var focusList = focus.split(".");
+				depth += focusList.length;
+			}
+		}
 
 		if (depth != 0)
 			truncateDeepResults(benchlist, depth);
@@ -25,8 +33,21 @@ function getBenchList(host, filter, depth) {
 	});
 }
 
-function truncateDeepResults(results, depth) {
-	$.each(results, function(i, bench) {
+function cutOutOfFocus(benchlist, focus) {
+	$.each(benchlist, function(i, bench) {
+		var r = bench["Result"];
+		var newResult = {};
+		$.each(r, function(key, value) {
+			if (key.substring(0, focus.length) == focus) {
+				newResult[key] = value;
+			}
+		});
+		bench["Result"] = newResult;
+	});
+}
+
+function truncateDeepResults(benchlist, depth) {
+	$.each(benchlist, function(i, bench) {
 		var r = bench["Result"];
 		var newResult = {};
 		$.each(r, function(key, value) {
@@ -84,6 +105,7 @@ function makeTable(benchlist) {
 
 
 	var m = makeResultTree(benchlist[0]["Result"]);
+	mergeSingleChilds(m);
 	addTimeLabels(head, m, benchlist[0]["Conf"]);
 
 	var body = $("<tbody>");
@@ -139,7 +161,9 @@ function addTimeLabels(head, resultTree, configuration) {
 			var th = $("<th>");
 			headTr.append(th);
 			data["th"] = th;
-			th.html(data.name);
+			var focus = ("prefix" in data) ? data.prefix : "";
+			focus += data.name;
+			th.html('<a href="/list?focus=' + focus + '&depth=1&filter=' + '">' + data.name + "<a>");
 			th.attr('colspan', data.dw.width);
 			if (data.dw.depth == 1)
 				th.attr('rowspan', maxDepth - depth);
@@ -176,7 +200,13 @@ function getWidthDepth(node) {
 function addTimeResults(body, resultTree, prefix, result) {
 	$.each(resultTree.children, function(i, child) {
 		if (child.children.length == 0) {
-			body.append("<td>" + result[prefix+child.name].toFixed(3) + "</td>");
+			if (child.name == "total")
+				element = $("<th>");
+			else
+				element = $("<td>");
+			element.attr("align", "right");
+			element.html(result[prefix+child.name].toFixed(3));
+			body.append(element);
 		} else {
 			addTimeResults(body, child, prefix + child.name + ".", result);
 		}
@@ -207,6 +237,18 @@ function findChild(node, childName) {
 	return result;
 }
 
+function mergeSingleChilds(tree) {
+	if ("name" in tree && tree.name != "" && tree.children.length == 1) {
+		tree.name += "." + tree.children[0].name
+		tree.children = tree.children[0].children;
+		mergeSingleChilds(tree);
+	} else {
+		$.each(tree.children, function(i, child) {
+			mergeSingleChilds(child);
+		});
+	}
+}
+
 function makeResultTree(result) {
 	var m = {"children":[]};
 
@@ -216,7 +258,12 @@ function makeResultTree(result) {
 		$.each(l, function(i, token) {
 			var i = findChild(current, token);
 			if (i == -1) {
-				child = {"name":token,"children":[], "parent":current};
+				child = {"name":token,"children":[]};
+				if ("name" in current)
+					if ("prefix" in current)
+						child["prefix"] = current.prefix + current.name + ".";
+					else
+						child["prefix"] = current.name + ".";
 				if (child.name == "total")
 					current.children.unshift(child);
 				else
