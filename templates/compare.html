@@ -1,0 +1,48 @@
+<html>
+	<head>
+		<title>Compare - BenchBase WebUI</title>
+		{{template "stylesheets" .}}
+	</head>
+
+	<body>
+
+		{{template "navbar" .}}
+
+		{{if .Focus}}
+		<ol id="focus_list" class="breadcrumb" style="width: 800px; margin:auto; margin-bottom: 30px;">
+			<li><a href="/compare?filter={{.Filter}}&depth=2">Focus</a></li>
+		</ol>
+		{{end}}
+
+		<div id="compare"></div>
+
+		{{template "scripts" .}}
+
+
+		<script src="/static/compare.js"></script>
+
+		{{if .Focus}}
+		<script>
+var focus = "{{.Focus}}";
+var focusList = focus.split(".");
+var prefix = "";
+$.each(focusList, function(i, token) {
+	if (i != 0)
+		prefix += ".";
+	prefix += token;
+
+	if (i == focusList.length-1)
+		$("#focus_list").append("<li>"+token+"</li>");
+	else
+		$("#focus_list").append("<li><a href='/compare?filter={{.Filter}}&depth=1&focus=" + prefix + "'>" + token + "</a></li>");
+});
+		</script>
+		{{end}}
+		<script>
+// getBenchComparison("{{.Host}}", "{{.Filter}}", {{.Depth}}, "{{.Focus}}");
+getBenchComparison({{.Host}}, "Rev", '["11", "12"]', '[]', {{.Filter}}, {{.Depth}}, {{.Focus}});
+		</script>
+	</body>
+</html>
+
+

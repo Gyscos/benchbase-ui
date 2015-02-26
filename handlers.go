@@ -16,6 +16,14 @@ func setupHandlers(host string) {
 	if err != nil {
 		log.Fatal(err)
 	}
+	compareT, err := template.ParseFiles(
+		"templates/compare.html",
+		"templates/navbar.html",
+		"templates/scripts.html",
+		"templates/stylesheets.html")
+	if err != nil {
+		log.Fatal(err)
+	}
 	indexT, err := template.ParseFiles(
 		"templates/index.html",
 		"templates/index_list.html",
@@ -58,6 +66,26 @@ func setupHandlers(host string) {
 	})
 
 	http.HandleFunc("/compare", func(w http.ResponseWriter, r *http.Request) {
+		filter := r.FormValue("filter")
+		focus := r.FormValue("focus")
+		depth, err := strconv.ParseInt(r.FormValue("depth"), 10, 64)
+		if err != nil {
+			depth = 2
+		}
+		err = compareT.Execute(w, struct {
+			Host   string
+			Filter string
+			Depth  int64
+			Focus  string
+		}{
+			host,
+			filter,
+			depth,
+			focus,
+		})
+		if err != nil {
+			log.Println(err)
+		}
 	})
 
 	http.Handle("/static/", http.FileServer(http.Dir(".")))
