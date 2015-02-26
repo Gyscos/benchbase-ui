@@ -10,7 +10,11 @@
 
 		{{template "navbar" .}}
 
-		<div>
+		<div id="listDiv" class="container" style="border: 1px solid #b0b0b0; border-radius:4px;">
+			{{template "index_list"}}
+		</div>
+		<div id="compareDiv" class="container" style="display:none;border: 1px solid #b0b0b0; border-radius:4px;">
+			{{template "index_compare"}}
 		</div>
 
 		{{template "scripts" .}}

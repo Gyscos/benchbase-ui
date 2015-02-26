@@ -8,11 +8,21 @@ import (
 )
 
 func setupHandlers(host string) {
-	listT, err := template.ParseFiles("templates/list.html", "templates/navbar.html", "templates/scripts.html", "templates/stylesheets.html")
+	listT, err := template.ParseFiles(
+		"templates/list.html",
+		"templates/navbar.html",
+		"templates/scripts.html",
+		"templates/stylesheets.html")
 	if err != nil {
 		log.Fatal(err)
 	}
-	indexT, err := template.ParseFiles("templates/index.html", "templates/navbar.html", "templates/scripts.html", "templates/stylesheets.html")
+	indexT, err := template.ParseFiles(
+		"templates/index.html",
+		"templates/index_list.html",
+		"templates/index_compare.html",
+		"templates/navbar.html",
+		"templates/scripts.html",
+		"templates/stylesheets.html")
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -10,7 +10,7 @@
 
 		{{if .Focus}}
 		<ol id="focus_list" class="breadcrumb" style="width: 800px; margin:auto; margin-bottom: 30px;">
-			<li>Focus</li>
+			<li><a href="/list?filter={{.Filter}}&depth=2">Focus</a></li>
 		</ol>
 		{{end}}
 
@@ -26,13 +26,14 @@ var focus = "{{.Focus}}";
 var focusList = focus.split(".");
 var prefix = "";
 $.each(focusList, function(i, token) {
-	var depth = {{.Depth}};
-	if (prefix == "")
-		depth = 2;
-	$("#focus_list").append("<li><a href='/list?filter={{.Filter}}&depth=" + depth + "&focus=" + prefix + "'>" + token + "</a></li>");
 	if (i != 0)
 		prefix += ".";
 	prefix += token;
+
+	if (i == focusList.length-1)
+		$("#focus_list").append("<li>"+token+"</li>");
+	else
+		$("#focus_list").append("<li><a href='/list?filter={{.Filter}}&depth=1&focus=" + prefix + "'>" + token + "</a></li>");
 });
 		</script>
 		{{end}}
