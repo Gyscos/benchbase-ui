@@ -14,12 +14,48 @@
 		</ol>
 		{{end}}
 
-		<div id="list"></div>
+		<div id="list">
+
+			{{range .Tables}}
+			<table class="table table-hover table-striped table-bordered table-nonfluid">
+				<thead>
+					<tr><td colspan="{{.Width}}">{{.Category}}</td></tr>
+					{{range .Titles}}
+					<tr>
+						{{range .}}
+						<th colspan="{{.Width}}" rowspan="{{.Height}}">
+							{{if .Focus}}
+							<a href="/list?filter={{$.Filter}}&depth=1&focus={{.Focus}}">{{.Title}}</a>
+							{{else}}
+								{{.Title}}
+							{{end}}
+						</th>
+						{{end}}
+					</tr>
+					{{end}}
+				</thead>
+
+				<tbody>
+					{{range  .BenchList}}
+					<tr>
+						<td>{{.Name}}</td>
+						{{range .Times}}
+						<td style="text-align:right">{{.}}</td>
+						{{end}}
+					</tr>
+					{{end}}
+				</tbody>
+
+			</table>
+
+
+			{{end}}
+		
+		</div>
 
 		{{template "scripts" .}}
 
 
-		<script src="/static/list.js"></script>
 		{{if .Focus}}
 		<script>
 var focus = "{{.Focus}}";
@@ -37,7 +73,6 @@ $.each(focusList, function(i, token) {
 });
 		</script>
 		{{end}}
-		<script>getBenchList("{{.Host}}", "{{.Filter}}", {{.Depth}}, "{{.Focus}}");</script>
 	</body>
 </html>
 

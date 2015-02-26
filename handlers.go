@@ -49,16 +49,17 @@ func setupHandlers(host string) {
 		if err != nil {
 			depth = 2
 		}
+
+		tables, err := MakeListTables(host, filter, focus, int(depth))
+
 		err = listT.Execute(w, struct {
-			Host   string
 			Filter string
-			Depth  int64
 			Focus  string
+			Tables []BenchListTable
 		}{
-			host,
 			filter,
-			depth,
 			focus,
+			tables,
 		})
 		if err != nil {
 			log.Println(err)
