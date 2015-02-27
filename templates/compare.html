@@ -14,12 +14,27 @@
 		</ol>
 		{{end}}
 
-		<div id="compare"></div>
+		<div id="compare">
+			{{range .Tables}}
+			<table class="table table-hover table-striped table-bordered table-nonfluid">
+				<thead>
+					<tr><th style="text-align:center;">{{.Category}}</th></tr>
+					{{template "titles" addFilter .Titles $.Filter}}
+				</thead>
+
+				<tbody>
+					{{range .BenchGroups}}
+
+						{{template "benchlist" .}}
+
+					{{end}}
+				</tbody>
+			</table>
+
+			{{end}}
+		</div>
 
 		{{template "scripts" .}}
-
-
-		<script src="/static/compare.js"></script>
 
 		{{if .Focus}}
 		<script>
@@ -38,10 +53,6 @@ $.each(focusList, function(i, token) {
 });
 		</script>
 		{{end}}
-		<script>
-// getBenchComparison("{{.Host}}", "{{.Filter}}", {{.Depth}}, "{{.Focus}}");
-getBenchComparison({{.Host}}, "Rev", '["11", "12"]', '[]', {{.Filter}}, {{.Depth}}, {{.Focus}});
-		</script>
 	</body>
 </html>
 

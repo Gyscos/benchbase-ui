@@ -7,18 +7,39 @@ import (
 	"strconv"
 )
 
+type FilterPipeline struct {
+	Data   interface{}
+	Filter interface{}
+}
+
+func addFilter(data interface{}, filter interface{}) *FilterPipeline {
+	return &FilterPipeline{data, filter}
+}
+
 func setupHandlers(host string) {
-	listT, err := template.ParseFiles(
+	funcs := template.FuncMap{}
+	funcs["addFilter"] = addFilter
+
+	listT := template.New("list.html")
+	listT.Funcs(funcs)
+	// listT, err := template.ParseFiles(
+	listT, err := listT.ParseFiles(
 		"templates/list.html",
 		"templates/navbar.html",
+		"templates/benchlist.html",
+		"templates/titles.html",
 		"templates/scripts.html",
 		"templates/stylesheets.html")
-	if err != nil {
+	if err != nil || listT == nil {
 		log.Fatal(err)
 	}
-	compareT, err := template.ParseFiles(
+	compareT := template.New("compare.html")
+	compareT.Funcs(funcs)
+	_, err = compareT.ParseFiles(
 		"templates/compare.html",
 		"templates/navbar.html",
+		"templates/benchlist.html",
+		"templates/titles.html",
 		"templates/scripts.html",
 		"templates/stylesheets.html")
 	if err != nil {
@@ -51,6 +72,10 @@ func setupHandlers(host string) {
 		}
 
 		tables, err := MakeListTables(host, filter, focus, int(depth))
+		if err != nil {
+			// That's bad? Report it maybe?
+			// This means having an error template
+		}
 
 		err = listT.Execute(w, struct {
 			Filter string
@@ -69,20 +94,25 @@ func setupHandlers(host string) {
 	http.HandleFunc("/compare", func(w http.ResponseWriter, r *http.Request) {
 		filter := r.FormValue("filter")
 		focus := r.FormValue("focus")
+		spec := r.FormValue("spec")
+		values := r.FormValue("values")
+		ignore := r.FormValue("ignore")
 		depth, err := strconv.ParseInt(r.FormValue("depth"), 10, 64)
 		if err != nil {
 			depth = 2
 		}
+		tables, err := MakeCompareTables(host, spec, values, ignore, filter, focus, int(depth))
+		if err != nil {
+		}
+
 		err = compareT.Execute(w, struct {
-			Host   string
 			Filter string
-			Depth  int64
 			Focus  string
+			Tables []BenchCompareTable
 		}{
-			host,
 			filter,
-			depth,
 			focus,
+			tables,
 		})
 		if err != nil {
 			log.Println(err)

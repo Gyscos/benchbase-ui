@@ -21,7 +21,12 @@ type BenchListTableTitle struct {
 
 type BenchListRow struct {
 	Name  string
-	Times []string
+	Times []TimeResult
+}
+
+type TimeResult struct {
+	Total bool
+	Time  string
 }
 
 type BenchListTable struct {
@@ -66,7 +71,7 @@ func MakeListTables(host string, filter string, focus string, depth int) ([]Benc
 
 	result := make([]BenchListTable, len(groups))
 	for i, g := range groups {
-		result[i] = makeTable(g)
+		result[i] = makeListTable(g)
 	}
 
 	return result, nil
@@ -115,7 +120,7 @@ func groupByConf(benchlist []benchbase.Benchmark) [][]benchbase.Benchmark {
 	return result
 }
 
-func makeTable(benchlist []benchbase.Benchmark) BenchListTable {
+func makeListTable(benchlist []benchbase.Benchmark) BenchListTable {
 	var result BenchListTable
 
 	if len(benchlist) == 0 {
@@ -127,7 +132,7 @@ func makeTable(benchlist []benchbase.Benchmark) BenchListTable {
 	computeDepthWidth(tree)
 
 	result.Category = categoryName(benchlist[0].Conf)
-	result.Titles = makeTimeLabels(tree, benchlist[0].Conf)
+	result.Titles = makeTimeLabels(tree, benchlist[0].Conf, "Host")
 	result.BenchList = makeBenchList(tree, benchlist)
 	result.Width = tree.width + 1
 
@@ -215,7 +220,7 @@ func categoryName(conf benchbase.Configuration) string {
 	}
 }
 
-func makeTimeLabels(tree *TimeTree, conf benchbase.Configuration) [][]BenchListTableTitle {
+func makeTimeLabels(tree *TimeTree, conf benchbase.Configuration, specName string) [][]BenchListTableTitle {
 
 	var result [][]BenchListTableTitle
 
@@ -230,7 +235,7 @@ func makeTimeLabels(tree *TimeTree, conf benchbase.Configuration) [][]BenchListT
 		if depth == 1 {
 			// Special case: we insert host
 			titles = append(titles, BenchListTableTitle{
-				Title:  "Host",
+				Title:  specName,
 				Width:  1,
 				Height: tree.depth,
 			})
@@ -296,11 +301,11 @@ func makeBenchResults(tree *TimeTree, bench benchbase.Benchmark) BenchListRow {
 	return result
 }
 
-func addBenchResults(times *[]string, tree *TimeTree, results benchbase.Result) {
+func addBenchResults(times *[]TimeResult, tree *TimeTree, results benchbase.Result) {
 	for _, child := range tree.children {
 		if len(child.children) == 0 {
 			time := fmt.Sprintf("%.2f", results[child.prefix+child.name])
-			*times = append(*times, time)
+			*times = append(*times, TimeResult{child.name == "total", time})
 		} else {
 			addBenchResults(times, child, results)
 		}

@@ -19,31 +19,12 @@
 			{{range .Tables}}
 			<table class="table table-hover table-striped table-bordered table-nonfluid">
 				<thead>
-					<tr><td colspan="{{.Width}}">{{.Category}}</td></tr>
-					{{range .Titles}}
-					<tr>
-						{{range .}}
-						<th colspan="{{.Width}}" rowspan="{{.Height}}">
-							{{if .Focus}}
-							<a href="/list?filter={{$.Filter}}&depth=1&focus={{.Focus}}">{{.Title}}</a>
-							{{else}}
-								{{.Title}}
-							{{end}}
-						</th>
-						{{end}}
-					</tr>
-					{{end}}
+					<tr><th colspan="{{.Width}}" style="text-align:center;">{{.Category}}</th></tr>
+					{{template "titles" addFilter .Titles $.Filter}}
 				</thead>
 
 				<tbody>
-					{{range  .BenchList}}
-					<tr>
-						<td>{{.Name}}</td>
-						{{range .Times}}
-						<td style="text-align:right">{{.}}</td>
-						{{end}}
-					</tr>
-					{{end}}
+					{{template "benchlist" .BenchList}}
 				</tbody>
 
 			</table>

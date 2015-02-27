@@ -1,0 +1,16 @@
+{{define "benchlist"}}
+
+{{range .}}
+<tr>
+	<th>{{.Name}}</th>
+	{{range .Times}}
+	{{if .Total}}
+	<th style="text-align:right">{{.Time}}</td>
+	{{else}}
+	<td style="text-align:right">{{.Time}}</td>
+	{{end}}
+	{{end}}
+</tr>
+{{end}}
+
+{{end}}
