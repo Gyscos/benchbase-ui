@@ -10,7 +10,7 @@
 
 		{{if .Focus}}
 		<ol id="focus_list" class="breadcrumb" style="width: 800px; margin:auto; margin-bottom: 30px;">
-			<li><a href="/compare?filter={{.Filter}}&depth=2">Focus</a></li>
+			<li><a href="/compare?spec={{.Spec}}&values={{.Values}}&filter={{.Filter}}&depth=2">Focus</a></li>
 		</ol>
 		{{end}}
 
@@ -55,7 +55,7 @@ $.each(focusList, function(i, token) {
 	if (i == focusList.length-1)
 		$("#focus_list").append("<li>"+token+"</li>");
 	else
-		$("#focus_list").append("<li><a href='/compare?filter={{.Filter}}&depth=1&focus=" + prefix + "'>" + token + "</a></li>");
+		$("#focus_list").append("<li><a href='/compare?spec={{.Spec}}&values={{.Values}}&filter={{.Filter}}&depth=1&focus=" + prefix + "'>" + token + "</a></li>");
 });
 		</script>
 		{{end}}
