@@ -75,8 +75,73 @@ func makeCompareTable(groups [][]benchbase.Benchmark, spec string) BenchCompareT
 	mergeSingleChilds(tree)
 	computeDepthWidth(tree)
 
+	commonSpecs := getCommonSpecs(groups)
+	result.Category = describeConf(commonSpecs)
 	result.Titles = makeTimeLabels(tree, groups[0][0].Conf, spec)
+	result.BenchGroups = makeBenchGroups(tree, groups, commonSpecs)
 	result.Width = tree.width + 1
 
 	return result
+}
+
+func intersectConf(a, b benchbase.Configuration) benchbase.Configuration {
+	if a == nil {
+		return b
+	}
+	if b == nil {
+		return a
+	}
+
+	result := benchbase.Configuration{}
+
+	for k, v := range a {
+		if b[k] == v {
+			result[k] = v
+		}
+	}
+
+	return result
+}
+
+func getCommonSpecs(groups [][]benchbase.Benchmark) benchbase.Configuration {
+	var commonSpecs benchbase.Configuration
+	// We want the intersection of common specs
+	for _, group := range groups {
+		for _, bench := range group {
+			commonSpecs = intersectConf(commonSpecs, bench.Conf)
+		}
+	}
+	return commonSpecs
+}
+
+func describeConf(conf benchbase.Configuration) string {
+	var result []string
+
+	if conf["ForceAnalyze"] == "true" {
+		result = append(result, "[Analyze API]")
+	} else {
+		result = append(result, "[Direct API]")
+	}
+
+	if conf["Host"] != "" {
+		result = append(result, fmt.Sprintf("Host:%v", conf["Host"]))
+	}
+
+	if conf["Rev"] != "" {
+		result = append(result, fmt.Sprintf("r%v", conf["Rev"]))
+	}
+
+	if conf["Threads"] != "" {
+		result = append(result, fmt.Sprintf("(%v threads)", conf["Threads"]))
+	}
+
+	return strings.Join(result, " ")
+}
+
+func makeBenchGroups(tree *TimeTree, groups [][]benchbase.Benchmark, commonSpecs benchbase.Configuration) [][]BenchListRow {
+	rowGroups := make([][]BenchListRow, len(groups))
+	for i, group := range groups {
+		rowGroups[i] = makeBenchList(tree, group, commonSpecs)
+	}
+	return rowGroups
 }

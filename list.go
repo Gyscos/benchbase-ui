@@ -133,7 +133,7 @@ func makeListTable(benchlist []benchbase.Benchmark) BenchListTable {
 
 	result.Category = categoryName(benchlist[0].Conf)
 	result.Titles = makeTimeLabels(tree, benchlist[0].Conf, "Host")
-	result.BenchList = makeBenchList(tree, benchlist)
+	result.BenchList = makeBenchList(tree, benchlist, benchbase.Configuration{})
 	result.Width = tree.width + 1
 
 	return result
@@ -284,18 +284,18 @@ func computeDepthWidth(node *TimeTree) {
 	}
 }
 
-func makeBenchList(tree *TimeTree, benchlist []benchbase.Benchmark) []BenchListRow {
+func makeBenchList(tree *TimeTree, benchlist []benchbase.Benchmark, ignoredSpecs benchbase.Configuration) []BenchListRow {
 	result := make([]BenchListRow, len(benchlist))
 	for i, bench := range benchlist {
-		result[i] = makeBenchResults(tree, bench)
+		result[i] = makeBenchResults(tree, bench, ignoredSpecs)
 	}
 	return result
 }
 
-func makeBenchResults(tree *TimeTree, bench benchbase.Benchmark) BenchListRow {
+func makeBenchResults(tree *TimeTree, bench benchbase.Benchmark, ignoredSpecs benchbase.Configuration) BenchListRow {
 	var result BenchListRow
 
-	result.Name = makeBenchName(bench.Conf)
+	result.Name = makeBenchName(bench.Conf, ignoredSpecs)
 	addBenchResults(&result.Times, tree, bench.Result)
 
 	return result
@@ -312,15 +312,23 @@ func addBenchResults(times *[]TimeResult, tree *TimeTree, results benchbase.Resu
 	}
 }
 
-func makeBenchName(conf benchbase.Configuration) string {
-	result := conf["Host"]
+func makeBenchName(conf benchbase.Configuration, ignoredSpecs benchbase.Configuration) string {
+	var result []string
 
-	r, err := strconv.ParseInt(conf["Rev"], 10, 64)
-	if err == nil {
-		result += fmt.Sprintf(" r%v", r)
+	if conf["Host"] != ignoredSpecs["Host"] {
+		result = append(result, conf["Host"])
 	}
 
-	result += " (" + conf["Threads"] + " threads)"
+	if conf["Rev"] != ignoredSpecs["Rev"] {
+		r, err := strconv.ParseInt(conf["Rev"], 10, 64)
+		if err == nil {
+			result = append(result, fmt.Sprintf("r%v", r))
+		}
+	}
 
-	return result
+	if conf["Threads"] != ignoredSpecs["Threads"] {
+		result = append(result, "("+conf["Threads"]+" threads)")
+	}
+
+	return strings.Join(result, " ")
 }
