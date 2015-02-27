@@ -38,6 +38,7 @@ func setupHandlers(host string) {
 	}
 	indexT, err := template.ParseFiles(
 		"templates/index.html",
+		"templates/filters.html",
 		"templates/index_list.html",
 		"templates/index_compare.html",
 		"templates/navbar.html",
@@ -101,12 +102,14 @@ func setupHandlers(host string) {
 			Focus  string
 			Spec   string
 			Values string
+			Ignore string
 			Tables []BenchCompareTable
 		}{
 			filter,
 			focus,
 			spec,
 			values,
+			ignore,
 			tables,
 		})
 		if err != nil {

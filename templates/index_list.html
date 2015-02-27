@@ -1,85 +1,13 @@
 {{define "index_list"}}
 
-<h2>Filters</h2>
-
 <form>
-	<div class="row">
-		<div class="col-lg-3">
-			<div class="form-group">
-				<label for="hostInput">Host</label>
-				<input class="form-control" id="hostInput" placeholder="Ex: c4.xlarge">
-			</div>
-		</div>
-		<div class="col-lg-3">
-			<div class="form-group">
-				<label for="revInput">Svn Revision</label>
-				<input class="form-control" id="revInput" placeholder="Ex: 11156">
-			</div>
-		</div>
-		<div class="col-lg-3">
-			<div class="form-group">
-				<label for="threadsInput">Threads used</label>
-				<input class="form-control" id="threadsInput" placeholder="Ex: 4">
-			</div>
-		</div>
-		<div class="col-lg-3">
-			<div class="form-group">
-				<label for="threadsPerCPUInput">Threads used per CPU</label>
-				<input class="form-control" id="threadsPerCPUInput" placeholder="Ex: 1">
-			</div>
-		</div>
-	</div>
-	<div>
-		<h4>Force analyze API?</h4>
-		<label class="radio-inline">
-			<input type="radio" name="forceAnalyze" value="" checked="checked">Any
-		</label>
-		<label class="radio-inline">
-			<input type="radio" name="forceAnalyze" value="ForceAnalyze=true">Analyze API
-		</label>
-		<label class="radio-inline">
-			<input type="radio" name="forceAnalyze" value="ForceAnalyze=false">Direct API
-		</label>
-	</div>
-
-	<center><button style="margin-top:30px;" type="button" class="btn btn-primary btn-lg" onClick="askList();">List</button></center></form>
+	{{template "filters"}}
+	<center><button style="margin-top:30px;" type="button" class="btn btn-primary btn-lg" onClick="askList();">List</button></center>
+</form>
 
 <script>
 function askList() {
-	var filters = [];
-
-	var host = $("#hostInput").val();
-	if (host != "") {
-		if (host.charAt(0) == "=" || host.charAt(0) == ">" || host.charAt(0) == "<" || host.charAt(0) == "!")
-			host = "Host" + host;
-		else
-			host = "Host="+host;
-		filters.push(host);
-	}
-
-	var rev = $("#revInput").val();
-	if (rev != "") {
-		if (rev.charAt(0) == "r")
-			rev = rev.substring(1);
-		filters.push("Rev="+rev);
-	}
-
-	var threads = $("#threadsInput").val();
-	if (threads != "") {
-		filters.push("Threads="+threads);
-	}
-
-	var threadsPerCPU = $("#threadsPerCPUInput").val();
-	if (threadsPerCPU != "") {
-		filters.push("ThreadPerCPU="+threadsPerCPU);
-	}
-
-	var analyze = $("input:radio[name=forceAnalyze]:checked").val();
-	if (analyze != "") {
-		filters.push(analyze);
-	}
-
-	var filter = filters.join(";");
+	var filter = makeFilter();
 
 	document.location = "/list?filter="+filter;
 }

@@ -1,7 +1,7 @@
 {{define "benchlist"}}
 
 {{range .}}
-<tr>
+<tr class="rowGroup{{.Group}}">
 	<th>{{.Name}}</th>
 	{{range .Times}}
 	{{if .Total}}

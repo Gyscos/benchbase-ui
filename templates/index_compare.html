@@ -1,5 +1,74 @@
 {{define "index_compare"}}
 
-<h2>Filters</h2>
+<h2>Spec</h2>
+<form class="form-inline">
+	<select class="form-control" id="specInput">
+		<option>Host</option>
+		<option>Rev</option>
+	</select>
+	<input class="form-control" id="value1">
+	vs
+	<input class="form-control" id="value2">
+</form>
+
+<h2>Ignore</h2>
+<form>
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<div class="checkbox">
+				<label>
+					<input type="checkbox" id="ignoreHost"> Host
+				</label>
+			</div>
+			<div class="checkbox">
+				<label>
+					<input type="checkbox" id="ignoreRev"> Rev
+				</label>
+			</div>
+			<label class="radio-inline">
+				<input type="radio" name="ignoreThreads" value="Threads" checked="checked">Threads
+			</label>
+			<label class="radio-inline">
+				<input type="radio" name="ignoreThreads" value="ThreadPerCPU">ThreadsPerCPU
+			</label>
+			<label class="radio-inline">
+				<input type="radio" name="ignoreThreads" value="Both">Both
+			</label>
+		</div>
+	</div>
+</form>
+
+{{template "filters"}}
+
+<center><button style="margin-top:30px;" type="button" class="btn btn-primary btn-lg" onClick="askCompare();">Compare</button></center>
+
+<script>
+function askCompare() {
+	var filter = makeFilter();
+	var spec = $("#specInput").val();
+
+	var value1 = $("#value1").val();
+	var value2 = $("#value2").val();
+	var valueList = [value1, value2];
+	var values = JSON.stringify(valueList);
+
+	var ignores = [];
+	if ($("#ignoreHost").prop("checked"))
+		ignores.push("Host");
+	if ($("#ignoreRev").prop("checked"))
+		ignores.push("Rev");
+	var ignoreThreads = $("input:radio[name=ignoreThreads]:checked").val();
+	if (ignoreThreads == "both") {
+		ignores.push("Threads");
+		ignores.push("ThreadPerCPU");
+	} else {
+		ignores.push(ignoreThreads);
+	}
+	var ignore = JSON.stringify(ignores);
+
+
+	document.location = "/compare?filter="+filter+"&spec="+spec+"&values="+values+"&ignore="+ignore;
+}
+</script>
 
 {{end}}

@@ -19,7 +19,8 @@ type BenchCompareTable struct {
 }
 
 func MakeCompareTables(host string, spec string, values string, ignore string, filter string, focus string, depth int) ([]BenchCompareTable, error) {
-	resp, err := http.Get(fmt.Sprintf("%v/compare?spec=%v&values=%v&ignore=%v&filter=%v", host, spec, values, ignore, filter))
+	url := fmt.Sprintf("%v/compare?spec=%v&values=%v&ignore=%v&filter=%v", host, spec, values, ignore, filter)
+	resp, err := http.Get(url)
 	if err != nil {
 		return nil, err
 	}
@@ -141,7 +142,7 @@ func describeConf(conf benchbase.Configuration) string {
 func makeBenchGroups(tree *TimeTree, groups [][]benchbase.Benchmark, commonSpecs benchbase.Configuration) [][]BenchListRow {
 	rowGroups := make([][]BenchListRow, len(groups))
 	for i, group := range groups {
-		rowGroups[i] = makeBenchList(tree, group, commonSpecs)
+		rowGroups[i] = makeBenchList(tree, group, commonSpecs, i+1)
 	}
 	return rowGroups
 }

@@ -10,7 +10,7 @@
 
 		{{if .Focus}}
 		<ol id="focus_list" class="breadcrumb" style="width: 800px; margin:auto; margin-bottom: 30px;">
-			<li><a href="/compare?spec={{.Spec}}&values={{.Values}}&filter={{.Filter}}&depth=2">Focus</a></li>
+			<li><a href="javascript:setPage({focus:'',depth:2});">Focus</a></li>
 		</ol>
 		{{end}}
 
@@ -37,8 +37,33 @@
 		{{template "scripts" .}}
 
 		<script>
+function setPage(extra) {
+	document.location = makeLink(extra);
+}
 function setFocus(focus) {
-	document.location = "/compare?depth=1&spec={{.Spec}}&values={{.Values}}&filter={{.Filter}}&focus="+focus;
+	setPage({focus:focus});
+}
+
+function makeLink(extra) {
+	var data = {
+		spec: "{{.Spec}}",
+		values:"{{.Values}}",
+		ignore:"{{.Ignore}}",
+		filter:"{{.Filter}}",
+		depth:1,
+		focus:"{{.Focus}}"
+	};
+
+	$.each(extra, function(k,v) {
+		data[k] = v;
+	});
+
+	var params = [];
+	$.each(data, function(k, v) {
+		params.push(k +"="+v);
+	});
+
+	return "/compare?" + params.join("&");
 }
 		</script>
 
@@ -55,11 +80,9 @@ $.each(focusList, function(i, token) {
 	if (i == focusList.length-1)
 		$("#focus_list").append("<li>"+token+"</li>");
 	else
-		$("#focus_list").append("<li><a href='/compare?spec={{.Spec}}&values={{.Values}}&filter={{.Filter}}&depth=1&focus=" + prefix + "'>" + token + "</a></li>");
+		$("#focus_list").append("<li><a href='" + makeLink({focus:prefix}) + "'>" + token + "</a></li>");
 });
 		</script>
 		{{end}}
 	</body>
 </html>
-
-

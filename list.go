@@ -21,6 +21,7 @@ type BenchListTableTitle struct {
 
 type BenchListRow struct {
 	Name  string
+	Group int
 	Times []TimeResult
 }
 
@@ -133,7 +134,7 @@ func makeListTable(benchlist []benchbase.Benchmark) BenchListTable {
 
 	result.Category = categoryName(benchlist[0].Conf)
 	result.Titles = makeTimeLabels(tree, benchlist[0].Conf, "Host")
-	result.BenchList = makeBenchList(tree, benchlist, benchbase.Configuration{})
+	result.BenchList = makeBenchList(tree, benchlist, benchbase.Configuration{}, 0)
 	result.Width = tree.width + 1
 
 	return result
@@ -284,10 +285,12 @@ func computeDepthWidth(node *TimeTree) {
 	}
 }
 
-func makeBenchList(tree *TimeTree, benchlist []benchbase.Benchmark, ignoredSpecs benchbase.Configuration) []BenchListRow {
+func makeBenchList(tree *TimeTree, benchlist []benchbase.Benchmark, ignoredSpecs benchbase.Configuration, group int) []BenchListRow {
 	result := make([]BenchListRow, len(benchlist))
 	for i, bench := range benchlist {
-		result[i] = makeBenchResults(tree, bench, ignoredSpecs)
+		row := makeBenchResults(tree, bench, ignoredSpecs)
+		row.Group = group
+		result[i] = row
 	}
 	return result
 }
