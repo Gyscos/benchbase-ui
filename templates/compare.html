@@ -19,7 +19,7 @@
 			<table class="table table-hover table-striped table-bordered table-nonfluid">
 				<thead>
 					<tr><th style="text-align:center;" colspan="{{.Width}}">{{.Category}}</th></tr>
-					{{template "titles" addFilter .Titles $.Filter}}
+					{{template "titles" .Titles}}
 				</thead>
 
 				<tbody>
@@ -35,6 +35,12 @@
 		</div>
 
 		{{template "scripts" .}}
+
+		<script>
+function setFocus(focus) {
+	document.location = "/compare?depth=1&spec={{.Spec}}&values={{.Values}}&filter={{.Filter}}&focus="+focus;
+}
+		</script>
 
 		{{if .Focus}}
 		<script>

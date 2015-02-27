@@ -12,18 +12,11 @@ type FilterPipeline struct {
 	Filter interface{}
 }
 
-func addFilter(data interface{}, filter interface{}) *FilterPipeline {
-	return &FilterPipeline{data, filter}
-}
-
 func setupHandlers(host string) {
-	funcs := template.FuncMap{}
-	funcs["addFilter"] = addFilter
 
-	listT := template.New("list.html")
-	listT.Funcs(funcs)
-	// listT, err := template.ParseFiles(
-	listT, err := listT.ParseFiles(
+	// listT := template.New("list.html")
+	// listT, err := listT.ParseFiles(
+	listT, err := template.ParseFiles(
 		"templates/list.html",
 		"templates/navbar.html",
 		"templates/benchlist.html",
@@ -33,9 +26,7 @@ func setupHandlers(host string) {
 	if err != nil || listT == nil {
 		log.Fatal(err)
 	}
-	compareT := template.New("compare.html")
-	compareT.Funcs(funcs)
-	_, err = compareT.ParseFiles(
+	compareT, err := template.ParseFiles(
 		"templates/compare.html",
 		"templates/navbar.html",
 		"templates/benchlist.html",
@@ -108,10 +99,14 @@ func setupHandlers(host string) {
 		err = compareT.Execute(w, struct {
 			Filter string
 			Focus  string
+			Spec   string
+			Values string
 			Tables []BenchCompareTable
 		}{
 			filter,
 			focus,
+			spec,
+			values,
 			tables,
 		})
 		if err != nil {

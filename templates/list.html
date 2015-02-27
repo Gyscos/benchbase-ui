@@ -20,7 +20,7 @@
 			<table class="table table-hover table-striped table-bordered table-nonfluid">
 				<thead>
 					<tr><th colspan="{{.Width}}" style="text-align:center;">{{.Category}}</th></tr>
-					{{template "titles" addFilter .Titles $.Filter}}
+					{{template "titles" .Titles}}
 				</thead>
 
 				<tbody>
@@ -36,6 +36,11 @@
 
 		{{template "scripts" .}}
 
+		<script>
+function setFocus(focus) {
+	document.location = "/list?depth=1&filter={{.Filter}}&focus="+focus;
+}
+		</script>
 
 		{{if .Focus}}
 		<script>
