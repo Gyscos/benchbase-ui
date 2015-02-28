@@ -1,13 +1,13 @@
 {{define "index_list"}}
 
 <form>
-	{{template "filters"}}
+	{{template "filters" "List"}}
 	<center><button style="margin-top:30px;" type="button" class="btn btn-primary btn-lg" onClick="askList();">List</button></center>
 </form>
 
 <script>
 function askList() {
-	var filter = makeFilter();
+	var filter = filterMakers["List"]();
 
 	document.location = "/list?filter="+filter;
 }

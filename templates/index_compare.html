@@ -38,13 +38,14 @@
 	</div>
 </form>
 
-{{template "filters"}}
+{{template "filters" "Compare"}}
 
 <center><button style="margin-top:30px;" type="button" class="btn btn-primary btn-lg" onClick="askCompare();">Compare</button></center>
 
 <script>
 function askCompare() {
-	var filter = makeFilter();
+	var filter = filterMakers["Compare"]();
+	//var filter = makeFilterCompare();
 	var spec = $("#specInput").val();
 
 	var value1 = $("#value1").val();
