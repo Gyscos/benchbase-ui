@@ -8,11 +8,13 @@
 
 		{{template "navbar" .}}
 
-		{{if .Focus}}
 		<ol id="focus_list" class="breadcrumb" style="width: 800px; margin:auto; margin-bottom: 30px;">
-			<li><a href="javascript:setPage({focus:''});">Focus</a></li>
+			{{if .Focus}}
+			<li><a href="javascript:setPage({focus:''});">List</a></li>
+			{{else}}
+			<li>List</li>
+			{{end}}
 		</ol>
-		{{end}}
 
 		<div id="list">
 
