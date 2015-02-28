@@ -17,7 +17,6 @@
 		</ol>
 
 		<div id="list">
-
 			{{range .Tables}}
 			<table class="table table-hover table-striped table-bordered table-nonfluid">
 				<thead>
@@ -28,12 +27,9 @@
 				<tbody>
 					{{template "benchlist" .BenchList}}
 				</tbody>
-
 			</table>
-
-
+			<br>
 			{{end}}
-		
 		</div>
 
 		{{template "scripts" .}}
