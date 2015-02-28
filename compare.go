@@ -48,6 +48,11 @@ func MakeCompareTables(host string, spec string, values string, ignore string, f
 		}
 	}
 
+	if depth < 0 {
+		// Find best depth
+		depth = findBestDepth(getFirstResult(data.Result))
+	}
+
 	if depth != 0 {
 		for _, table := range data.Result {
 			for _, group := range table {
@@ -63,6 +68,18 @@ func MakeCompareTables(host string, spec string, values string, ignore string, f
 	}
 
 	return result, nil
+}
+
+func getFirstResult(tables [][][]benchbase.Benchmark) benchbase.Result {
+	for _, table := range tables {
+		for _, group := range table {
+			for _, bench := range group {
+				return bench.Result
+			}
+		}
+	}
+
+	return benchbase.Result{}
 }
 
 func makeCompareTable(groups [][]benchbase.Benchmark, spec string) BenchCompareTable {

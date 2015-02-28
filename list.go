@@ -59,9 +59,14 @@ func MakeListTables(host string, filter string, focus string, depth int) ([]Benc
 
 	if focus != "" {
 		cutOutOfFocus(data.Result, focus)
-		if depth != 0 {
+		if depth > 0 {
 			depth += 1 + strings.Count(focus, ".")
 		}
+	}
+
+	if depth < 0 {
+		// Find best depth
+		depth = findBestDepth(data.Result[0].Result)
 	}
 
 	if depth != 0 {
@@ -76,6 +81,36 @@ func MakeListTables(host string, filter string, focus string, depth int) ([]Benc
 	}
 
 	return result, nil
+}
+
+func findBestDepth(result benchbase.Result) int {
+	depths := make(map[int]int)
+	deepest := 0
+
+	for k, _ := range result {
+		depth := strings.Count(k, ".") + 1
+		if strings.HasSuffix(k, ".total") {
+			depth--
+		}
+		if depth > deepest {
+			deepest = depth
+		}
+		depths[depth]++
+	}
+
+	// Find the deepest value with reasonable width
+	best := 0
+	width := 0
+	for depth := 0; depth <= deepest; depth++ {
+		width += depths[depth]
+		if width < 17 {
+			best = depth
+		} else {
+			break
+		}
+	}
+
+	return best
 }
 
 func cutOutOfFocus(benchlist []benchbase.Benchmark, focus string) {

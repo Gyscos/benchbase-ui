@@ -10,7 +10,7 @@
 
 		{{if .Focus}}
 		<ol id="focus_list" class="breadcrumb" style="width: 800px; margin:auto; margin-bottom: 30px;">
-			<li><a href="javascript:setPage({focus:'',depth:2});">Focus</a></li>
+			<li><a href="javascript:setPage({focus:''});">Focus</a></li>
 		</ol>
 		{{end}}
 
@@ -47,7 +47,6 @@ function setFocus(focus) {
 function makeLink(extra) {
 	var data = {
 		filter:"{{.Filter}}",
-		depth:1,
 		focus:"{{.Focus}}"
 	};
 

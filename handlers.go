@@ -60,7 +60,7 @@ func setupHandlers(host string) {
 		focus := r.FormValue("focus")
 		depth, err := strconv.ParseInt(r.FormValue("depth"), 10, 64)
 		if err != nil {
-			depth = 2
+			depth = -1
 		}
 
 		tables, err := MakeListTables(host, filter, focus, int(depth))
@@ -91,7 +91,7 @@ func setupHandlers(host string) {
 		ignore := r.FormValue("ignore")
 		depth, err := strconv.ParseInt(r.FormValue("depth"), 10, 64)
 		if err != nil {
-			depth = 2
+			depth = -1
 		}
 		tables, err := MakeCompareTables(host, spec, values, ignore, filter, focus, int(depth))
 		if err != nil {
