@@ -58,7 +58,7 @@ func MakeListTables(host string, filter string, focus string, depth int) ([]Benc
 	}
 
 	if focus != "" {
-		cutOutOfFocus(data.Result, focus)
+		cutOutOfFocus(data.Result, focus+".")
 		if depth > 0 {
 			depth += 1 + strings.Count(focus, ".")
 		}
