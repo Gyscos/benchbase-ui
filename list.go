@@ -58,7 +58,7 @@ func MakeListTables(host string, filter string, focus string, depth int) ([]Benc
 	}
 
 	if focus != "" {
-		cutOutOfFocus(data.Result, focus+".")
+		cutOutOfFocus(data.Result, focus)
 		if depth > 0 {
 			depth += 1 + strings.Count(focus, ".")
 		}
@@ -116,7 +116,7 @@ func findBestDepth(result benchbase.Result) int {
 func cutOutOfFocus(benchlist []benchbase.Benchmark, focus string) {
 	for _, b := range benchlist {
 		for k, _ := range b.Result {
-			if !strings.HasPrefix(k, focus) {
+			if k != focus && !strings.HasPrefix(k, focus+".") {
 				delete(b.Result, k)
 			}
 		}

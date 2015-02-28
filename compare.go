@@ -40,7 +40,7 @@ func MakeCompareTables(host string, spec string, values string, ignore string, f
 	if focus != "" {
 		for _, table := range data.Result {
 			for _, group := range table {
-				cutOutOfFocus(group, focus+".")
+				cutOutOfFocus(group, focus)
 			}
 		}
 		if depth != 0 {
