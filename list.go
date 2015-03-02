@@ -57,6 +57,10 @@ func MakeListTables(host string, filter string, focus string, depth int) ([]Benc
 		return nil, errors.New(data.Error)
 	}
 
+	if len(data.Result) == 0 {
+		return nil, nil
+	}
+
 	if focus != "" {
 		cutOutOfFocus(data.Result, focus)
 		if depth > 0 {
