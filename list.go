@@ -153,6 +153,12 @@ func groupByConf(benchlist []benchbase.Benchmark) [][]benchbase.Benchmark {
 		m[b.Conf["ForceAnalyze"]] = append(m[b.Conf["ForceAnalyze"]], b)
 	}
 
+	for k, v := range m {
+		if len(v) == 0 || len(v[0].Result) == 0 {
+			delete(m, k)
+		}
+	}
+
 	var result [][]benchbase.Benchmark
 	for _, l := range m {
 		result = append(result, l)
