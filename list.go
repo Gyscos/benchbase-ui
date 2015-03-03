@@ -153,15 +153,20 @@ func groupByConf(benchlist []benchbase.Benchmark) [][]benchbase.Benchmark {
 		m[b.Conf["ForceAnalyze"]] = append(m[b.Conf["ForceAnalyze"]], b)
 	}
 
+	var keys []string
 	for k, v := range m {
 		if len(v) == 0 || len(v[0].Result) == 0 {
 			delete(m, k)
+		} else {
+			keys = append(keys, k)
 		}
 	}
 
+	sort.StringSlice(keys).Sort()
+
 	var result [][]benchbase.Benchmark
-	for _, l := range m {
-		result = append(result, l)
+	for _, k := range keys {
+		result = append(result, m[k])
 	}
 	return result
 }
@@ -330,6 +335,20 @@ func computeDepthWidth(node *TimeTree) {
 	}
 }
 
+type BenchTable []BenchListRow
+
+func (bt BenchTable) Len() int {
+	return len(bt)
+}
+
+func (bt BenchTable) Less(i, j int) bool {
+	return bt[i].Name < bt[j].Name
+}
+
+func (bt BenchTable) Swap(i, j int) {
+	bt[i], bt[j] = bt[j], bt[i]
+}
+
 func makeBenchList(tree *TimeTree, benchlist []benchbase.Benchmark, ignoredSpecs benchbase.Configuration, group int) []BenchListRow {
 	result := make([]BenchListRow, len(benchlist))
 	for i, bench := range benchlist {
@@ -337,6 +356,9 @@ func makeBenchList(tree *TimeTree, benchlist []benchbase.Benchmark, ignoredSpecs
 		row.Group = group
 		result[i] = row
 	}
+
+	sort.Sort(BenchTable(result))
+
 	return result
 }
 
