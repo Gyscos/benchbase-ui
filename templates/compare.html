@@ -45,12 +45,23 @@ function setFocus(focus) {
 	setPage({focus:focus});
 }
 
+function toggleFilter(spec, value) {
+	var filters = {};
+	var filterString = "{{.Filters}}";
+	if (filterString != "")
+		filters = JSON.parse(filterString);
+	filters[spec] = value;
+	setPage({filter:JSON.stringify(filters)});
+}
+
 function makeLink(extra) {
 	var data = {
 		spec: "{{.Spec}}",
 		values:"{{.Values}}",
 		ignore:"{{.Ignore}}",
-		filter:"{{.Filter}}",
+		filters:"{{.Filters}}",
+		ordering:"{{.Ordering}}",
+		max:"{{.Max}}",
 		depth:1,
 		focus:"{{.Focus}}"
 	};

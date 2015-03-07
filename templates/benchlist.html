@@ -4,10 +4,10 @@
 <tr class="rowGroup{{.Group}}">
 	<th>
 		{{if .Host}}
-		<a href="javascript:toggleFilter('Host', '{{.Host}}');">{{.Host}}</a>
+		<a href="javascript:toggleFilter('Host', '={{.Host}}');">{{.Host}}</a>
 		{{end}}
 		{{if .Rev}}
-		<a href="javascript:toggleFilter('Rev', '{{.Rev}}');">r{{.Rev}}</a>
+		<a href="javascript:toggleFilter('Rev', '={{.Rev}}');">r{{.Rev}}</a>
 		{{end}}
 	</th>
 	{{range .Times}}

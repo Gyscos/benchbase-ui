@@ -7,11 +7,6 @@ import (
 	"strconv"
 )
 
-type FilterPipeline struct {
-	Data   interface{}
-	Filter interface{}
-}
-
 func setupHandlers(host string) {
 
 	// listT := template.New("list.html")
@@ -56,7 +51,7 @@ func setupHandlers(host string) {
 	})
 
 	http.HandleFunc("/list", func(w http.ResponseWriter, r *http.Request) {
-		filter := r.FormValue("filters")
+		filters := r.FormValue("filters")
 		focus := r.FormValue("focus")
 		depth, err := strconv.ParseInt(r.FormValue("depth"), 10, 64)
 		if err != nil {
@@ -66,18 +61,22 @@ func setupHandlers(host string) {
 		max, _ := strconv.Atoi(r.FormValue("max"))
 		ordering := r.FormValue("ordering")
 
-		tables, err := MakeListTables(host, filter, ordering, max, focus, int(depth))
+		tables, err := MakeListTables(host, filters, ordering, max, focus, int(depth))
 		if err != nil {
 			// That's bad? Report it maybe?
 			// This means having an error template
 		}
 
 		err = listT.Execute(w, struct {
-			Filter string
-			Focus  string
-			Tables []ListBenchTable
+			Filters  string
+			Ordering string
+			Max      int
+			Focus    string
+			Tables   []ListBenchTable
 		}{
-			filter,
+			filters,
+			ordering,
+			max,
 			focus,
 			tables,
 		})
@@ -87,7 +86,9 @@ func setupHandlers(host string) {
 	})
 
 	http.HandleFunc("/compare", func(w http.ResponseWriter, r *http.Request) {
-		filter := r.FormValue("filter")
+		filters := r.FormValue("filters")
+		ordering := r.FormValue("ordering")
+		max, _ := strconv.Atoi(r.FormValue("max"))
 		focus := r.FormValue("focus")
 		spec := r.FormValue("spec")
 		values := r.FormValue("values")
@@ -96,19 +97,23 @@ func setupHandlers(host string) {
 		if err != nil {
 			depth = -1
 		}
-		tables, err := MakeCompareTables(host, spec, values, ignore, filter, focus, int(depth))
+		tables, err := MakeCompareTables(host, spec, values, ignore, filters, focus, int(depth))
 		if err != nil {
 		}
 
 		err = compareT.Execute(w, struct {
-			Filter string
-			Focus  string
-			Spec   string
-			Values string
-			Ignore string
-			Tables []CompareBenchTable
+			Filters  string
+			Ordering string
+			Max      int
+			Focus    string
+			Spec     string
+			Values   string
+			Ignore   string
+			Tables   []CompareBenchTable
 		}{
-			filter,
+			filters,
+			ordering,
+			max,
 			focus,
 			spec,
 			values,

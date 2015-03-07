@@ -42,10 +42,21 @@ function setFocus(focus) {
 	setPage({focus:focus});
 }
 
+function toggleFilter(spec, value) {
+	var filters = {};
+	var filterString = "{{.Filters}}";
+	if (filterString != "")
+		filters = JSON.parse(filterString);
+	filters[spec] = value;
+	setPage({filters:JSON.stringify(filters)});
+}
+
 function makeLink(extra) {
 	var data = {
-		filter:"{{.Filter}}",
-		focus:"{{.Focus}}"
+		filters:"{{.Filters}}",
+		ordering:"{{.Ordering}}",
+		max:"{{.Max}}",
+		focus:"{{.Focus}}",
 	};
 
 	$.each(extra, function(k,v) {
