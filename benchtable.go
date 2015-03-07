@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/Gyscos/benchbase"
 )
@@ -101,7 +102,7 @@ func makeTimeLabels(tree *TimeTree, conf benchbase.Configuration, specName strin
 			}
 			focus := node.prefix + node.name
 			if node.name == "total" {
-				focus = node.prefix
+				focus = strings.TrimSuffix(node.prefix, ".")
 			}
 			title := BenchTableTitle{
 				Title:  node.name,
