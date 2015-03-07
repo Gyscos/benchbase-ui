@@ -50,7 +50,10 @@ function toggleFilter(spec, value) {
 	var filterString = "{{.Filters}}";
 	if (filterString != "")
 		filters = JSON.parse(filterString);
-	filters[spec] = value;
+	if (filters[spec] == value)
+		delete filters[spec];
+	else
+		filters[spec] = value;
 	setPage({filter:JSON.stringify(filters)});
 }
 
