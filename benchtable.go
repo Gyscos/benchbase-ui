@@ -99,9 +99,13 @@ func makeTimeLabels(tree *TimeTree, conf benchbase.Configuration, specName strin
 			if node.depth == 1 {
 				height = tree.depth - depth
 			}
+			focus := node.prefix + node.name
+			if node.name == "total" {
+				focus = node.prefix
+			}
 			title := BenchTableTitle{
 				Title:  node.name,
-				Focus:  node.prefix + node.name,
+				Focus:  focus,
 				Width:  node.width,
 				Height: height,
 			}
