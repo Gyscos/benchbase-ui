@@ -10,15 +10,15 @@ import (
 	"github.com/Gyscos/benchbase"
 )
 
-type BenchCompareTable struct {
+type CompareBenchTable struct {
 	Category string
 	Width    int
 
-	Titles      [][]BenchListTableTitle
-	BenchGroups [][]BenchListRow
+	Titles      [][]BenchTableTitle
+	BenchGroups [][]BenchTableRow
 }
 
-func MakeCompareTables(host string, spec string, values string, ignore string, filter string, focus string, depth int) ([]BenchCompareTable, error) {
+func MakeCompareTables(host string, spec string, values string, ignore string, filter string, focus string, depth int) ([]CompareBenchTable, error) {
 	url := fmt.Sprintf("%v/compare?spec=%v&values=%v&ignore=%v&filter=%v", host, spec, values, ignore, filter)
 	resp, err := http.Get(url)
 	if err != nil {
@@ -61,7 +61,7 @@ func MakeCompareTables(host string, spec string, values string, ignore string, f
 		}
 	}
 
-	result := make([]BenchCompareTable, len(data.Result))
+	result := make([]CompareBenchTable, len(data.Result))
 
 	for i, table := range data.Result {
 		result[i] = makeCompareTable(table, spec)
@@ -82,8 +82,8 @@ func getFirstResult(tables [][][]benchbase.Benchmark) benchbase.Result {
 	return benchbase.Result{}
 }
 
-func makeCompareTable(groups [][]benchbase.Benchmark, spec string) BenchCompareTable {
-	var result BenchCompareTable
+func makeCompareTable(groups [][]benchbase.Benchmark, spec string) CompareBenchTable {
+	var result CompareBenchTable
 
 	if len(groups) == 0 || len(groups[0]) == 0 {
 		return result
@@ -156,10 +156,10 @@ func describeConf(conf benchbase.Configuration) string {
 	return strings.Join(result, " ")
 }
 
-func makeBenchGroups(tree *TimeTree, groups [][]benchbase.Benchmark, commonSpecs benchbase.Configuration) [][]BenchListRow {
-	rowGroups := make([][]BenchListRow, len(groups))
+func makeBenchGroups(tree *TimeTree, groups [][]benchbase.Benchmark, commonSpecs benchbase.Configuration) [][]BenchTableRow {
+	rowGroups := make([][]BenchTableRow, len(groups))
 	for i, group := range groups {
-		rowGroups[i] = makeBenchList(tree, group, commonSpecs, i+1)
+		rowGroups[i] = makeBenchGroup(tree, group, commonSpecs, i+1)
 	}
 	return rowGroups
 }

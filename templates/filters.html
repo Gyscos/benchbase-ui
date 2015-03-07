@@ -28,17 +28,38 @@
 			</div>
 		</div>
 	</div>
-	<div>
-		<h4>Force analyze API?</h4>
-		<label class="radio-inline">
-			<input type="radio" name="forceAnalyze{{.}}" value="" checked="checked">Any
-		</label>
-		<label class="radio-inline">
-			<input type="radio" name="forceAnalyze{{.}}" value="ForceAnalyze=true">Analyze API
-		</label>
-		<label class="radio-inline">
-			<input type="radio" name="forceAnalyze{{.}}" value="ForceAnalyze=false">Direct API
-		</label>
+	<div class="row">
+		<div class="col-lg-3">
+			<div class="form-group">
+				<h4>Order by:</h4>
+				<label class="radio-inline">
+					<input type="radio" name="ordering{{.}}" value="Rev" checked="checked">Rev, Host
+				</label>
+				<label class="radio-inline">
+					<input type="radio" name="ordering{{.}}" value="Host">Host, Rev
+				</label>
+			</div>
+		</div>
+		<div class="col-lg-3">
+			<div class="form-group">
+				<label for="maxResults{{.}}">Max results</label> (0 for unlimited)
+				<input class="form-control" id="maxResults{{.}}" placeholder="0">
+			</div>
+		</div>
+		<div class="col-lg-6">
+			<div class="form-group">
+				<h4>Force analyze API?</h4>
+				<label class="radio-inline">
+					<input type="radio" name="forceAnalyze{{.}}" value="" checked="checked">Any
+				</label>
+				<label class="radio-inline">
+					<input type="radio" name="forceAnalyze{{.}}" value="ForceAnalyze=true">Analyze API
+				</label>
+				<label class="radio-inline">
+					<input type="radio" name="forceAnalyze{{.}}" value="ForceAnalyze=false">Direct API
+				</label>
+			</div>
+		</div>
 	</div>
 </form>
 
@@ -80,9 +101,14 @@ filterMakers[{{. | print}}] = function () {
 		filters.push(analyze);
 	}
 
+	var ordering = '["' + $("input:radio[name=ordering{{.}}]:checked").val() + '"]';
+
+
 	var filter = filters.join(";");
 
-	return filter;
+	var m = $("#maxResults{{.}}").val();
+
+	return "filters="+filter+"&ordering=" + ordering + "&max=" + m;
 }
 </script>
 

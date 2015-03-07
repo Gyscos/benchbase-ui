@@ -56,14 +56,17 @@ func setupHandlers(host string) {
 	})
 
 	http.HandleFunc("/list", func(w http.ResponseWriter, r *http.Request) {
-		filter := r.FormValue("filter")
+		filter := r.FormValue("filters")
 		focus := r.FormValue("focus")
 		depth, err := strconv.ParseInt(r.FormValue("depth"), 10, 64)
 		if err != nil {
 			depth = -1
 		}
 
-		tables, err := MakeListTables(host, filter, focus, int(depth))
+		max, _ := strconv.Atoi(r.FormValue("max"))
+		ordering := r.FormValue("ordering")
+
+		tables, err := MakeListTables(host, filter, ordering, max, focus, int(depth))
 		if err != nil {
 			// That's bad? Report it maybe?
 			// This means having an error template
@@ -72,7 +75,7 @@ func setupHandlers(host string) {
 		err = listT.Execute(w, struct {
 			Filter string
 			Focus  string
-			Tables []BenchListTable
+			Tables []ListBenchTable
 		}{
 			filter,
 			focus,
@@ -103,7 +106,7 @@ func setupHandlers(host string) {
 			Spec   string
 			Values string
 			Ignore string
-			Tables []BenchCompareTable
+			Tables []CompareBenchTable
 		}{
 			filter,
 			focus,
