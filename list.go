@@ -19,8 +19,12 @@ type ListBenchTable struct {
 	BenchList []BenchTableRow
 }
 
-func MakeListTables(host string, filters string, ordering string, max int, focus string, depth int) ([]ListBenchTable, error) {
-	resp, err := http.Get(fmt.Sprintf("%v/list?filters=%v&ordering=%v&max=%v", host, filters, ordering, max))
+func MakeListRequestURL(host string, filters string, ordering string, max int) string {
+	return fmt.Sprintf("%v/list?filters=%v&ordering=%v&max=%v", host, filters, ordering, max)
+}
+
+func MakeListTables(requestURL string, focus string, depth int) ([]ListBenchTable, error) {
+	resp, err := http.Get(requestURL)
 	if err != nil {
 		return nil, err
 	}
@@ -72,6 +76,8 @@ func groupByConf(benchlist []benchbase.Benchmark) [][]benchbase.Benchmark {
 	for _, b := range benchlist {
 		m[b.Conf["ForceAnalyze"]] = append(m[b.Conf["ForceAnalyze"]], b)
 	}
+
+	// log.Println(m)
 
 	var keys []string
 	for k, v := range m {

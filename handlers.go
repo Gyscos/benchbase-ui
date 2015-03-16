@@ -57,11 +57,13 @@ func setupHandlers(host string) {
 		if err != nil {
 			depth = -1
 		}
+		_, debug := r.Form["debug"]
 
 		max, _ := strconv.Atoi(r.FormValue("max"))
 		ordering := r.FormValue("ordering")
 
-		tables, err := MakeListTables(host, filters, ordering, max, focus, int(depth))
+		url := MakeListRequestURL(host, filters, ordering, max)
+		tables, err := MakeListTables(url, focus, int(depth))
 		if err != nil {
 			// That's bad? Report it maybe?
 			// This means having an error template
@@ -73,12 +75,16 @@ func setupHandlers(host string) {
 			Max      int
 			Focus    string
 			Tables   []ListBenchTable
+			Debug    bool
+			URL      string
 		}{
 			filters,
 			ordering,
 			max,
 			focus,
 			tables,
+			debug,
+			url,
 		})
 		if err != nil {
 			log.Println(err)
@@ -97,7 +103,9 @@ func setupHandlers(host string) {
 		if err != nil {
 			depth = -1
 		}
-		tables, err := MakeCompareTables(host, spec, values, ignore, filters, focus, int(depth))
+		_, debug := r.Form["debug"]
+		url := MakeCompareRequestURL(host, spec, values, ignore, filters)
+		tables, err := MakeCompareTables(url, spec, focus, int(depth))
 		if err != nil {
 		}
 
@@ -110,6 +118,8 @@ func setupHandlers(host string) {
 			Values   string
 			Ignore   string
 			Tables   []CompareBenchTable
+			Debug    bool
+			URL      string
 		}{
 			filters,
 			ordering,
@@ -119,6 +129,8 @@ func setupHandlers(host string) {
 			values,
 			ignore,
 			tables,
+			debug,
+			url,
 		})
 		if err != nil {
 			log.Println(err)

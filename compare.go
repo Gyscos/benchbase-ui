@@ -18,9 +18,12 @@ type CompareBenchTable struct {
 	BenchGroups [][]BenchTableRow
 }
 
-func MakeCompareTables(host string, spec string, values string, ignore string, filter string, focus string, depth int) ([]CompareBenchTable, error) {
-	url := fmt.Sprintf("%v/compare?spec=%v&values=%v&ignore=%v&filter=%v", host, spec, values, ignore, filter)
-	resp, err := http.Get(url)
+func MakeCompareRequestURL(host string, spec string, values string, ignore string, filters string) string {
+	return fmt.Sprintf("%v/compare?spec=%v&values=%v&ignore=%v&filter=%v", host, spec, values, ignore, filters)
+}
+
+func MakeCompareTables(requestURL string, spec string, focus string, depth int) ([]CompareBenchTable, error) {
+	resp, err := http.Get(requestURL)
 	if err != nil {
 		return nil, err
 	}

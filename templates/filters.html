@@ -12,7 +12,7 @@
 		<div class="col-lg-3">
 			<div class="form-group">
 				<label for="revInput">Svn Revision</label>
-				<input class="form-control" id="revInput{{.}}" placeholder="Ex: 11156">
+				<input class="form-control" id="revInput{{.}}" placeholder="Ex: 11281">
 			</div>
 		</div>
 		<div class="col-lg-3">
@@ -53,10 +53,10 @@
 					<input type="radio" name="forceAnalyze{{.}}" value="" checked="checked">Any
 				</label>
 				<label class="radio-inline">
-					<input type="radio" name="forceAnalyze{{.}}" value="ForceAnalyze=true">Analyze API
+					<input type="radio" name="forceAnalyze{{.}}" value="true">Analyze API
 				</label>
 				<label class="radio-inline">
-					<input type="radio" name="forceAnalyze{{.}}" value="ForceAnalyze=false">Direct API
+					<input type="radio" name="forceAnalyze{{.}}" value="false">Direct API
 				</label>
 			</div>
 		</div>
@@ -68,43 +68,41 @@ if (typeof filterMakers == 'undefined') {
 	filterMakers = {};
 }
 filterMakers[{{. | print}}] = function () {
-	var filters = [];
+	var filters = {};
 
 	var host = $("#hostInput{{.}}").val();
 	if (host != "") {
-		if (host.charAt(0) == "=" || host.charAt(0) == ">" || host.charAt(0) == "<" || host.charAt(0) == "!")
-			host = "Host" + host;
-		else
-			host = "Host="+host;
-		filters.push(host);
+		filters["Host"] = host;
 	}
 
 	var rev = $("#revInput{{.}}").val();
 	if (rev != "") {
-		if (rev.charAt(0) == "r")
-			rev = rev.substring(1);
-		filters.push("Rev="+rev);
+		rev = rev.replace(/r/, '');
+		var c = rev.charAt(0);
+		if ("=><!".indexOf(c) == -1)
+			rev = "=" + rev;
+		filters["Rev"] = rev;
 	}
 
 	var threads = $("#threadsInput{{.}}").val();
 	if (threads != "") {
-		filters.push("Threads="+threads);
+		filters["Threads"] = threads;
 	}
 
 	var threadsPerCPU = $("#threadsPerCPUInput{{.}}").val();
 	if (threadsPerCPU != "") {
-		filters.push("ThreadPerCPU="+threadsPerCPU);
+		filters["ThreadPerCPU"] = threadsPerCPU;
 	}
 
 	var analyze = $("input:radio[name=forceAnalyze{{.}}]:checked").val();
 	if (analyze != "") {
-		filters.push(analyze);
+		filters["ForceAnalyze"] = analyze;
 	}
 
 	var ordering = '["' + $("input:radio[name=ordering{{.}}]:checked").val() + '"]';
 
 
-	var filter = filters.join(";");
+	var filter = JSON.stringify(filters);
 
 	var m = $("#maxResults{{.}}").val();
 

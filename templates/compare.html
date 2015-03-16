@@ -8,6 +8,10 @@
 
 		{{template "navbar" .}}
 
+		{{if .Debug}}
+			<div class="highlight">{{.URL}}</div>
+		{{end}}
+
 		<ol id="focus_list" class="breadcrumb" style="width: 800px; margin:auto; margin-bottom: 30px;">
 			{{if .Focus}}
 			<li><a href="javascript:setPage({focus:''});">Compare</a></li>
