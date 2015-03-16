@@ -67,7 +67,9 @@
 if (typeof filterMakers == 'undefined') {
 	filterMakers = {};
 }
-filterMakers[{{. | print}}] = function () {
+
+// Add per-tab function
+filterMakers["{{.}}"] = function () {
 	var filters = {};
 
 	var host = $("#hostInput{{.}}").val();

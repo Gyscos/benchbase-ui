@@ -1,7 +1,6 @@
 package main
 
 import (
-	"html/template"
 	"log"
 	"net/http"
 	"strconv"
@@ -11,7 +10,7 @@ func setupHandlers(host string) {
 
 	// listT := template.New("list.html")
 	// listT, err := listT.ParseFiles(
-	listT, err := template.ParseFiles(
+	listT, err := LoadTemplate(
 		"templates/list.html",
 		"templates/navbar.html",
 		"templates/benchlist.html",
@@ -21,7 +20,7 @@ func setupHandlers(host string) {
 	if err != nil || listT == nil {
 		log.Fatal(err)
 	}
-	compareT, err := template.ParseFiles(
+	compareT, err := LoadTemplate(
 		"templates/compare.html",
 		"templates/navbar.html",
 		"templates/benchlist.html",
@@ -31,7 +30,7 @@ func setupHandlers(host string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	indexT, err := template.ParseFiles(
+	indexT, err := LoadTemplate(
 		"templates/index.html",
 		"templates/filters.html",
 		"templates/index_list.html",
@@ -136,6 +135,4 @@ func setupHandlers(host string) {
 			log.Println(err)
 		}
 	})
-
-	http.Handle("/static/", http.FileServer(http.Dir(".")))
 }
