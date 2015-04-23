@@ -42,7 +42,7 @@ func makeBenchGroup(tree *TimeTree, benchlist []benchbase.Benchmark, ignoredSpec
 	for i, bench := range benchlist {
 		row := makeBenchRow(tree, bench, ignoredSpecs)
 		row.Id = i
-		row.Group = group
+		row.Group = group % 7
 		result.Rows[i] = row
 	}
 
