@@ -5,9 +5,9 @@
 	{{range .}}
 	<th colspan="{{.Width}}" rowspan="{{.Height}}">
 		{{if .Focus}}
-		<a href="javascript:setFocus('{{.Focus}}')">{{.Title}}</a>
+			<a href="javascript:setFocus('{{.Focus}}')">{{.Title}}</a>
 		{{else}}
-		{{.Title}}
+			{{.Title}}
 		{{end}}
 	</th>
 	{{end}}

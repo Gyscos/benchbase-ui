@@ -16,7 +16,7 @@ type ListBenchTable struct {
 	Width    int
 
 	Titles    [][]BenchTableTitle
-	BenchList []BenchTableRow
+	BenchList BenchTableRows
 }
 
 func MakeListRequestURL(host string, filters string, ordering string, max int) string {
@@ -66,6 +66,7 @@ func MakeListTables(requestURL string, focus string, depth int) ([]ListBenchTabl
 	result := make([]ListBenchTable, len(groups))
 	for i, g := range groups {
 		result[i] = makeListTable(g)
+		result[i].BenchList.TableID = i
 	}
 
 	return result, nil

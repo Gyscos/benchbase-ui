@@ -20,21 +20,30 @@ type TimeResult struct {
 	Time  string
 }
 
+type BenchTableRows struct {
+	TableID int
+	Rows    []BenchTableRow
+}
+
 type BenchTableRow struct {
+	Id      int
 	Host    string
 	Rev     string
 	Threads string
+	Date    string
 
 	Group int
 	Times []TimeResult
 }
 
-func makeBenchGroup(tree *TimeTree, benchlist []benchbase.Benchmark, ignoredSpecs benchbase.Configuration, group int) []BenchTableRow {
-	result := make([]BenchTableRow, len(benchlist))
+func makeBenchGroup(tree *TimeTree, benchlist []benchbase.Benchmark, ignoredSpecs benchbase.Configuration, group int) BenchTableRows {
+	result := BenchTableRows{
+		Rows: make([]BenchTableRow, len(benchlist))}
 	for i, bench := range benchlist {
 		row := makeBenchRow(tree, bench, ignoredSpecs)
+		row.Id = i
 		row.Group = group
-		result[i] = row
+		result.Rows[i] = row
 	}
 
 	return result
@@ -42,6 +51,8 @@ func makeBenchGroup(tree *TimeTree, benchlist []benchbase.Benchmark, ignoredSpec
 
 func makeBenchRow(tree *TimeTree, bench benchbase.Benchmark, ignoredSpecs benchbase.Configuration) BenchTableRow {
 	var result BenchTableRow
+
+	result.Date = bench.Date.Format("2006-01-02")
 
 	if bench.Conf["Host"] != ignoredSpecs["Host"] {
 		result.Host = bench.Conf["Host"]

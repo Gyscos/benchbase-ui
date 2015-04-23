@@ -15,7 +15,7 @@ type CompareBenchTable struct {
 	Width    int
 
 	Titles      [][]BenchTableTitle
-	BenchGroups [][]BenchTableRow
+	BenchGroups []BenchTableRows
 }
 
 func MakeCompareRequestURL(host string, spec string, values string, ignore string, filters string) string {
@@ -67,7 +67,7 @@ func MakeCompareTables(requestURL string, spec string, focus string, depth int) 
 	result := make([]CompareBenchTable, len(data.Result))
 
 	for i, table := range data.Result {
-		result[i] = makeCompareTable(table, spec)
+		result[i] = makeCompareTable(table, spec, i)
 	}
 
 	return result, nil
@@ -85,7 +85,7 @@ func getFirstResult(tables [][][]benchbase.Benchmark) benchbase.Result {
 	return benchbase.Result{}
 }
 
-func makeCompareTable(groups [][]benchbase.Benchmark, spec string) CompareBenchTable {
+func makeCompareTable(groups [][]benchbase.Benchmark, spec string, tableId int) CompareBenchTable {
 	var result CompareBenchTable
 
 	if len(groups) == 0 || len(groups[0]) == 0 {
@@ -99,7 +99,7 @@ func makeCompareTable(groups [][]benchbase.Benchmark, spec string) CompareBenchT
 	commonSpecs := getCommonSpecs(groups)
 	result.Category = describeConf(commonSpecs)
 	result.Titles = makeTimeLabels(tree, groups[0][0].Conf, spec)
-	result.BenchGroups = makeBenchGroups(tree, groups, commonSpecs)
+	result.BenchGroups = makeBenchGroups(tree, groups, commonSpecs, tableId)
 	result.Width = tree.width + 1
 
 	return result
@@ -159,10 +159,11 @@ func describeConf(conf benchbase.Configuration) string {
 	return strings.Join(result, " ")
 }
 
-func makeBenchGroups(tree *TimeTree, groups [][]benchbase.Benchmark, commonSpecs benchbase.Configuration) [][]BenchTableRow {
-	rowGroups := make([][]BenchTableRow, len(groups))
+func makeBenchGroups(tree *TimeTree, groups [][]benchbase.Benchmark, commonSpecs benchbase.Configuration, tableId int) []BenchTableRows {
+	rowGroups := make([]BenchTableRows, len(groups))
 	for i, group := range groups {
 		rowGroups[i] = makeBenchGroup(tree, group, commonSpecs, i+1)
+		rowGroups[i].TableID = i
 	}
 	return rowGroups
 }

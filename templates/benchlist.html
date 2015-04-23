@@ -1,7 +1,7 @@
 {{define "benchlist"}}
 
-{{range .}}
-<tr class="rowGroup{{.Group}}">
+{{range .Rows}}
+<tr class="rowGroup{{.Group}}" style="height:35px;">
 	<th>
 		{{if .Host}}
 		<a href="javascript:toggleFilter('Host', '={{.Host}}');">{{.Host}}</a>
@@ -9,14 +9,44 @@
 		{{if .Rev}}
 		<a href="javascript:toggleFilter('Rev', '={{.Rev}}');">r{{.Rev}}</a>
 		{{end}}
+		<span style="font-weight: normal;">
+		({{.Date}})
+		</span>
 	</th>
 	{{range .Times}}
-	{{if .Total}}
-	<th style="text-align:right">{{.Time}}</td>
-	{{else}}
-	<td style="text-align:right">{{.Time}}</td>
+		{{if .Total}}
+		<th style="text-align:right">{{.Time}}</td>
+		{{else}}
+		<td style="text-align:right">{{.Time}}</td>
+		{{end}}
 	{{end}}
-	{{end}}
+	<td style="width:45px;" onclick='onCompareCellClick("{{.Id}}-{{.Group}}-{{$.TableID}}");' align="center">
+		<script>
+
+if (typeof configurations == 'undefined') {
+	configurations = {};
+}
+configurations["{{.Id}}-{{.Group}}-{{$.TableID}}"] = {
+	"Host": "{{.Host}}",
+	"Rev": "{{.Rev}}",
+	"Threads": "{{.Threads}}"
+};
+		</script>
+
+		<button class="cmp_btn" type="button" onClick='startCompare("{{.Id}}-{{.Group}}-{{$.TableID}}")' class="btn btn-default btn-xs" aria-label="Left Align" id="cmp_btn_{{.Id}}-{{.Group}}-{{$.TableID}}">
+			  <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+		</button>
+
+		<button style="display:none;" class="cmp_btn_stop" type="button" onClick='stopCompare("{{.Id}}-{{.Group}}-{{$.TableID}}")' class="btn btn-default btn-xs" aria-label="Left Align" id="cmp_btn_stop_{{.Id}}-{{.Group}}-{{$.TableID}}">
+			  <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+		</button>
+
+		<button style="display:none;" class="cmp_btn_go" type="button" onClick='doCompare("{{.Id}}-{{.Group}}-{{$.TableID}}")' class="btn btn-default btn-xs" aria-label="Left Align" id="cmp_btn_go_{{.Id}}-{{.Group}}-{{$.TableID}}">
+			  <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+		</button>
+
+		<input onClick='onCompareSelect("{{.Id}}-{{.Group}}-{{$.TableID}}");event.stopPropagation();' class="cmp_cb" type="checkbox" aria-label="Compare this one" id="cmp_cb_{{.Id}}-{{.Group}}-{{$.TableID}}" style="display:none;">
+	</td>
 </tr>
 {{end}}
 

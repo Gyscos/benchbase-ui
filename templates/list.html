@@ -46,6 +46,104 @@ function setFocus(focus) {
 	setPage({focus:focus});
 }
 
+var compareList = [];
+
+function startCompare(id) {
+	$(".cmp_cb:not(#cmp_cb_" + id + ")").css("display", "inline");
+	$("#cmp_btn_stop_" + id).css("display", "inline");
+	$(".cmp_btn").css("display", "none");
+
+	compareList.push(id);
+}
+
+function stopCompare(id) {
+	$(".cmp_cb").css("display", "none");
+	$(".cmp_cb").prop("checked", false);
+	$(".cmp_btn_stop").css("display", "none");
+	$(".cmp_btn").css("display", "inline");
+
+	compareList = [];
+}
+
+function doCompare() {
+	$(".cmp_cb").prop("checked", false);
+	// Compute the actual comparison query
+
+	// Check all different parameters
+	var specs = ["Rev", "Host", "Threads"];
+
+	//
+	var variedSpecs=[];
+
+	$.each(specs, function(i, spec) {
+		// Is it the same everywhere?
+		var target = configurations[compareList[0]][spec];
+
+		$.each(compareList, function(j, id) {
+			if (configurations[id][spec] != target) {
+				// Add this spec
+				variedSpecs.push(spec);
+				return false;
+			}
+		});
+	});
+
+	if (variedSpecs.length < 1)
+		return;
+
+	var spec = variedSpecs[0];
+
+	var valueSet = {};
+	$.each(compareList, function(i,id) {
+		valueSet[configurations[id][spec]] = true;
+	});
+	
+	var values = [];
+	$.each(valueSet, function(value, t) {
+		values.push(value);
+	});
+
+	var ignore = [];
+	$.each(variedSpecs, function(i,vspec) {
+		if (vspec != spec)
+			ignore.push(vspec);
+	});
+	var filter = "filters={{.Filters}}&ordering={{.Ordering}}&max={{.Max}}";
+	document.location = "/compare?" + filter + "&spec=" + spec + "&values=" + JSON.stringify(values) + "&ignore=" + JSON.stringify(ignore);
+
+}
+
+function onCompareCellClick(id) {
+	if (compareList.length == 0 || compareList[0] == id)
+		return;
+
+	if ($("#cmp_cb_"+id).prop("checked"))
+		$("#cmp_cb_"+id).prop("checked", false);
+	else
+		$("#cmp_cb_"+id).prop("checked", true);
+
+	onCompareSelect(id);
+}
+
+function onCompareSelect(id) {
+	if ($("#cmp_cb_"+id).prop("checked")) {
+		compareList.push(id);
+		if (compareList.length == 2) {
+			$("#cmp_btn_stop_"+compareList[0]).css('display','none');
+			$("#cmp_btn_go_"+compareList[0]).css('display','inline');
+		}
+	} else {
+		var i = compareList.indexOf(id);
+		if (i > 0)
+			compareList.splice(i,1);
+		if (compareList.length == 1) {
+			$("#cmp_btn_stop_"+compareList[0]).css('display','inline');
+			$("#cmp_btn_go_"+compareList[0]).css('display','none');
+		}
+	}
+
+}
+
 function toggleFilter(spec, value) {
 	var filters = {};
 	var filterString = "{{.Filters}}";
